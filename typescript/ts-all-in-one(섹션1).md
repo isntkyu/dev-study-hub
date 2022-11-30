@@ -67,3 +67,23 @@ const a = []; //never[]
 
 const a: string = []; // string[]
 ```
+
+- String(X), string(O)
+
+대문자 스트링을 사용하지마라.
+
+- Template Literal Types
+
+```ts
+type A = "a" | "b";
+type BACKTICK = `hello ${A}`;
+```
+
+- rest 파라미터
+
+rest 파라미터에도 타입을 붙일 수 있다.
+
+- tuple
+
+타입과 개수를 잡아주는 Array 타입인데.
+push 함수로는 추가 가능함.
