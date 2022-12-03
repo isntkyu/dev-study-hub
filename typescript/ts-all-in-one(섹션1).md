@@ -173,3 +173,103 @@ interface A {
 
 const b: B = { a: 1, b: "str" };
 ```
+
+- 좁은타입과 넓은타입
+
+any <-> never
+상세할수록 좁은타입임.
+
+- 잉여 속성 체크
+
+변수에 타입을 선엄함과 동시에 오브젝트 리터럴로 만들게 되면 잉여속성이 체크됨.
+
+```ts
+interface A {
+  a: number;
+  b: string;
+}
+
+const a: A = {
+  a: 1,
+  b: "str",
+  c: 1, //  error
+};
+```
+
+하지만 변수에 담아서 사용하면 체크되지 않음.
+
+```ts
+interface A {
+  a: number;
+  b: string;
+}
+const foo = {
+  a: 1,
+  b: "str",
+  c: 1, //  error
+};
+
+const a: A = foo; // not error
+```
+
+- void
+
+return undefined 는 가능 return null은 안됨.
+
+매개변수(콜백), 메소드(인터페이스, 선언)에서는 return 해도 됨. (사용하지 않겟다는 의미)
+함수에서는 return 하면 안됨. (리턴이 없다는 의미)
+
+- declare로 함수를 선언하면 js 에서는 사라지며 구현이 없어도된다.
+
+- 그래도 void를 사용할 떄 리턴을 하면 안되는 이유
+
+```ts
+interface A {
+  talk: () => void;
+}
+const a: A = {
+  talk() {
+    return 3;
+  },
+};
+
+const b = a.talk();
+```
+
+위의 코드에서 b 의 타입은 void 로 추론됨. 뒤에 as unknown as number 붙이면됨.
+
+- any보다는 차라리 unknown 을 쓴다.
+
+unknown을 쓰면 나중에 사용시에 as 로 타이핑해서 서야한다.
+
+```ts
+try {
+} catch (err) {
+  (error as Error).message;
+}
+```
+
+- 타입 가드 (기법)
+
+타입에러메시지는 마지막거만 보면된다.
+
+```ts
+if (typeof a === "number") a.toFixed(1);
+```
+
+union 타입일 때 구분을 위해 사용한다.
+
+- class를 타입으로 쓰면 인스턴스를 대입해야하는 것.
+
+union class type 에서 타입가드는 **instanceof** 사용
+
+내부 속성 값 비교를 if 문에 넣어도 타입추론이 된다. (똑똑한 듯)
+
+- in 연산자
+
+클래스간 타입 가드 사용시에 if ('속성명' in A) 로 사용 가능하다.
+
+- is 연산자
+
+타입 판별을 커스텀할 때 사용.
+return 타입에 is 를 넣어야 구별해준다.
