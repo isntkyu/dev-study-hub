@@ -87,3 +87,89 @@ rest 파라미터에도 타입을 붙일 수 있다.
 
 타입과 개수를 잡아주는 Array 타입인데.
 push 함수로는 추가 가능함.
+
+- enum
+
+```ts
+const enum Direction {
+  UP = 0,
+  DOWN = 1,
+  LEFT = 2,
+  RIGHT = 3,
+}
+```
+
+enum도 타입처럼 쓸 수 있음.
+
+아래와 똑같음. 하지만 enum 은 JS 에서 사라짐.
+아래의 as const 도 사라짐.
+
+```ts
+const Direction = {
+  UP: 0,
+  DOWN: 1,
+  LEFT: 2,
+  RIGHT: 3,
+} as const;
+```
+
+as const: 엄격히 상수로 타이핑.
+
+enum 을 안쓰면,
+
+> type Direction = typeof D[keyof typeof D];
+
+```ts
+const obj = { a: "123", b: "hello" } as const;
+type key = typeof obj[keyof typeof obj]; // 밸류를 타이핑.
+```
+
+- type 보단 interface에 객체지향프로그래밍에 필요한 기능이 많다.
+
+- union (|)
+
+typesript가 착각하기 쉽다. (string | number 의 경우 예시)
+
+- intersection(&)
+
+type A = obj & obj
+객체타입을 전부 만족시켜야할 때 사용.
+객체의 모든속성을 다 만족해야한다.
+
+- type 확장.
+
+```ts
+type A = { a: 1 };
+type B = A & { b: 1 };
+type C = B & { c: 1 };
+
+const c: C = { a: 1, b: 2, c: 3 };
+```
+
+- interface 확장
+
+```ts
+interface A {
+  a: number;
+}
+interface B extends A {
+  b: string;
+}
+
+const b: B = { a: 1, b: "str" };
+```
+
+type을 extends도 가능.
+
+**extends 하지 않고 여러번 선언해도 확장됨.**
+
+```ts
+interface A {
+  a: number;
+}
+interface A {
+  b: string;
+}
+
+const b: B = { a: 1, b: "str" };
+```
