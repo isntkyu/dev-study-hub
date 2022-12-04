@@ -273,3 +273,55 @@ union class type 에서 타입가드는 **instanceof** 사용
 
 타입 판별을 커스텀할 때 사용.
 return 타입에 is 를 넣어야 구별해준다.
+
+- {} 과 Object
+
+{}: 문자열도 대입 됨. 모든 타입을 말하는 것.
+
+- 4.8 버전 unknown = {} | null | undefined
+
+- 인덱스드 시그니처
+
+{ [key: string]: number }
+
+- 맵드 타입스
+
+키를 제한하기.
+
+```ts
+type A = "a" | "b";
+type B = { [key in A]: number };
+const b: B = { a: 1, b: 2 };
+```
+
+값도 방식으로 제한 가능.
+
+- Class
+
+생성자에서 매개변수를 받으면서 값을 넣을 수도 있다.
+
+> constructor(a: number = 123) {}
+
+클래스의 타입은 typeof Class 이고 그냥 Class는 인스턴스를 가리킨다.
+
+- 자바스크립트의 프라이빗(#) 보다는 타입스트립트의 private을 쓰자.
+
+---
+
+- 제네릭: 선언이 아닌 사용할 때 타입이 정해지는 것.
+
+T extends 를 사용하면 제네릭으로 들어올 수 있는 타입을 제한할 수도 있다.
+
+여러 제네릭 받기도 가능.
+
+> <T extends number, F extends string>
+
+- 함수모양의 제네릭 제한
+
+> <T extends (...args: any) => any>
+
+- 생성자로 제한하기
+
+> <T extends abstract new (...args: any) => any>
+
+- 인자에 기본값 대입하기 (ES2015에서 가능)
