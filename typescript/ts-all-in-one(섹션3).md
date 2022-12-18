@@ -122,3 +122,42 @@ infer: 추론
 
 intrinsic.
 구현부가 ts로 구현이 안됨.
+
+---
+
+- Promise.all
+
+keyof Array: 어레이 객체의 속성, 인덱스(string)
+
+```ts
+all<T extends readonly unknown[] | []>(values: T): Promise<(-readonly [P in keyof T]: Awaited<T[P]>)>;
+```
+
+- Awaited
+
+conditional type과 infer 타입추론 재귀 방식으로 최종 타입을 추론한다.
+
+---
+
+- bind
+
+```ts
+type T = ThisParameterType<typeof a>;
+
+type NoThis = OmitThisParameter<typeof a>;
+
+// this 를 없앤 함수를 뽑아냄 .
+```
+
+현재 bind는 5개 이상의 파라미터를 받는 경우는 그대로 타입을 반환함.
+5개정도면 실제 유스케이스는 전부 커버가 가능하긴 함. 문법적 한계.
+
+5개 이상의 경우 타입추론, 타입에러 이상할 수 있음.
+
+---
+
+- flat
+
+typescript 배열 의 인덱스로 -1 을 구현함. [-1, 0 ...][depth] (ts에서는 마이너스가 안됨.)
+
+20차원끼지만 구현되어있음.
