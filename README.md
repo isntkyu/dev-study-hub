@@ -1,3 +1,2 @@
-### 모든 기록
 
-- 원하는 키워드를 전체 검색으로 찾기 편할듯
+[데이터 중심 애플리케이션 설계](https://github.com/isntkyu/designing-data-intensive-applications)
