@@ -1,0 +1,20 @@
+{
+  "name": "04.test-building",
+  "version": "1.0.0",
+  "description": "리팩토링에 있어서 필수적인 테스트코드",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --require ts-node/register test/**/*.spec.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "ts-node": "^10.9.1"
+  }
+}

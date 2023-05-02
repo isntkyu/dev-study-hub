@@ -1,0 +1,18 @@
+{
+  "name": "chapter11",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "![image](https://user-images.githubusercontent.com/56504493/227983856-cb649b6d-e0e8-45ac-9c67-33bd60915170.png)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "level": "^6.0.1",
+    "subleveldown": "^4.1.4",
+    "nanoid": "^2.1.11",
+    "superagent": "^5.2.2"
+  }
+}
