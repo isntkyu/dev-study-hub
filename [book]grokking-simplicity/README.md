@@ -1,5 +1,9 @@
 # 쏙쏙 들어오는 함수형 코딩
 
+<img width="101" alt="스크린샷 2024-03-10 오후 11 54 49" src="https://github.com/isntkyu/dev-study-hub/assets/56504493/13aac5f0-2941-4311-96ef-1bb6a91d8c1b">
+
+---
+
 - 액션
 
 함수를 호출하는 시점과 횟수에 의존성이 있음  
