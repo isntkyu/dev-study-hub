@@ -107,3 +107,61 @@
 하위 계층은 테스트가 중요함.  
 상위 계층은 유지보수 쉬움(더 자주 바뀜, 잘 만들었다면)  
 하위 계층이 재사용성 높음.
+
+- 코드의 냄새(함수 이름의 암묵적 인자)
+
+함수 이름의 일부로 필드를 결정하는 문자열이 들어감.  
+즉, 함수이름이 구현의 차이를 만듦.
+
+필드명을 인자로 만들어내면 됨.
+
+ex) setPrice, setShip -> setField(field: 'price' | 'ship')
+
+일급으로 할 수 있는 것
+
+1. 변수에 할당
+2. 함수의 인자로 넘기기
+3. 함수의 리턴값으로 받기
+4. 배열이나 객체에 담기
+
+일급이 아닌 것
+
+1. 수식 연산자
+2. for, if
+3. try/catch block
+
+신박한 값 대체 방법
+
+```ts
+const translations = {};
+if (translations.hasOwnProperty(field)) field = translations[field];
+```
+
+- 데이터 지향(data orientation)
+
+일반적인 엔티티는 재사용 가능해야 해서 객체나 배열 사용한다. 데이터를 그대로 사용하면서 여러 방법으로 해석될 수 있도록 제한하지 않는 것
+
+- 고차함수 (ex. forEach)
+
+함수가 함수를 인자로 받음(콜백)
+
+자바스크립트에서 함수는 일급 값이기 때문에 일급이 아닌 것들을 함수로 만들면 일급이 된다.
+
+- 함수 본문 콜백으로 바꾸기 리팩터링
+
+```ts
+function example(fun) {
+  try {
+    fun();
+  } catch (err) {
+    // handle err log
+  }
+}
+
+function fun() {}
+example(function () {
+  fun;
+});
+```
+
+함수를 넘기면서 바로실행되면 안되고 감싸서 넘겨야함!
