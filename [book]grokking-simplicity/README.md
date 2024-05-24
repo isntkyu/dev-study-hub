@@ -169,6 +169,83 @@ example(function () {
 - 함수 체이닝
 
 map, reduce, filter 등 체이닝할 때 명확하게 만들기
+
 1. 체인 단계에 이름 붙이기
 2. 콜백에 이름 붙이기
-즉, 함수 추출이다. 두 가지 방법을 비교하자. 보통은 두번째 방법이 재사용성이 좋다
+   즉, 함수 추출이다. 두 가지 방법을 비교하자. 보통은 두번째 방법이 재사용성이 좋다
+
+연습 문제
+
+```ts
+function bigSpeders(customers) {
+  var withBigpurchases = filter(customers, hasBigPurchase);
+  var with2OrMorePurchase = filter(withBigpurchases, has2OrMorePurchases);
+
+  return with20rMorePurchase;
+}
+
+function hasBigPurchase(customer) {
+  return filter(customer.purchases, isBigPurchase).length > 0;
+}
+
+function isBigPurchase(purchase) {
+  return purchase.total > 100;
+}
+
+function has2OrMorePurchases(customer) {
+  return customer.purchases.length >= 2;
+}
+
+// -----------------------------
+
+function average(numbers) {
+  return reduce(numbers, 0, plus) / numbers.length;
+}
+
+function plus(acc, cur) {
+  return acc + cur;
+}
+
+function averagePurchaseTotals(customers) {
+  return map(customers, function (customer) {
+    return average(
+      map(customer.purchases, function (purchase) {
+        return purchase.total;
+      })
+    );
+  });
+}
+```
+
+- 스트림 결합(한번의 반복만 돌고 하나의 배열만 새로생성) 하면 가비지컬렉션이 적어진다.
+
+하지만 일반적으론 가독성이 더 중요하니, 병목이 생겼을 때만 참고하자
+
+함수 체이닝과 콜백을 활용해서 리팩토링
+
+- 체이닝 팁
+
+1. 데이터만들기
+2. 배열 전체를 다루기
+3. 작은 단계로 나누기
+4. 조건문을 filter로
+
+```ts
+function shoesAndSocksInventory(products) {
+  const shoesAndSocks = filter(products, function () {
+    return ['shoes', 'socks'].includes(product.type)
+  })
+  const inventories = map(shoesAndSocks, function(product) => {
+    return product.numberInInventory
+  })
+  return reduce(inventories, 0, plus)
+}
+```
+
+- 메서드로 체이닝 해도 됨.
+
+- reduce로 값을 만들기
+
+- 하지만 ES6
+
+- reduce의 강력함
