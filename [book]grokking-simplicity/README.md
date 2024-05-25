@@ -249,3 +249,9 @@ function shoesAndSocksInventory(products) {
 - 하지만 ES6
 
 - reduce의 강력함
+
+- 함수의 동작을 콜백으로 넘겨서 추상화시킬 수 있다.
+
+ex) increment(), decrement() > update(increment), update(decrement)
+
+- update(object, key, callback) https://www.geeksforgeeks.org/lodash-_-update-method/
