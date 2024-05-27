@@ -255,3 +255,6 @@ function shoesAndSocksInventory(products) {
 ex) increment(), decrement() > update(increment), update(decrement)
 
 - update(object, key, callback) https://www.geeksforgeeks.org/lodash-_-update-method/
+
+- 동기함수: 리턴 값을 받아 처리
+- 비동기함수: 콜백을 넘겨서 알아서 처리 (액션을 콜백으로 전달)
