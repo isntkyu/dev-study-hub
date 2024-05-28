@@ -258,3 +258,45 @@ ex) increment(), decrement() > update(increment), update(decrement)
 
 - 동기함수: 리턴 값을 받아 처리
 - 비동기함수: 콜백을 넘겨서 알아서 처리 (액션을 콜백으로 전달)
+
+- 동시성기본형: 자원을 안전하게 공유할 수 있는 재사용가능한 코드(ex, queue)
+- Queue
+
+```ts
+function Queue(worker) {
+  var queue_items = [];
+  var working = false;
+
+  function runNext() {
+    if (working)
+      return;
+    if (queue_items.length === 0)
+      return;
+    working = true;
+    var item = queue_items.shift();
+    worker(item.data, function (val) {
+      working = false;
+      setTimeout(item.callback, 0, val); // callback 이벤트 루프에 등록
+      runNext();
+    })
+  }
+
+  return function (data, callback) {
+    queue_items.push({
+      data: data,
+      callback: callback || function () {}
+    });
+
+    setTimeOut(runNext, 0); // closure
+  }
+}
+
+function clac_cart_worker(cart, done) {
+  calc_cart_total(cart, function(total) {
+    update_total_dom(total);
+    done(total);
+  });
+}
+
+var update_total_queue = Queue(calc_cart_worker);
+```
