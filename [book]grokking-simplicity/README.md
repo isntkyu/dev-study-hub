@@ -300,3 +300,15 @@ function clac_cart_worker(cart, done) {
 
 var update_total_queue = Queue(calc_cart_worker);
 ```
+
+- 단일스레드라는 자바스크립트의 특성과 클로저를 활용한 병렬 타임라인 간의 자원 공유 ( ~= Promise.all )
+
+```ts
+function Cut (num, callback) {
+  var num_finished = 0;
+  return function() {
+    num_finished += 1;
+    if (num_finished === num) callback();
+  }
+}
+```
