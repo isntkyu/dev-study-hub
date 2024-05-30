@@ -312,3 +312,16 @@ function Cut (num, callback) {
   }
 }
 ```
+
+- 비슷한 방법으로 멱등원(최초 한번의 실행만 완료되면 종료) 구현하기 (Promise의 any(), race() 비슷)
+
+```js
+function JustOnce (action) {
+  var alreadyCalled = false;
+  return function(a, b, c) {
+    if (alreadyCalled) return;
+    alreadyCalled = true;
+    return action(a, b, c);
+  }
+}
+```
