@@ -268,31 +268,29 @@ function Queue(worker) {
   var working = false;
 
   function runNext() {
-    if (working)
-      return;
-    if (queue_items.length === 0)
-      return;
+    if (working) return;
+    if (queue_items.length === 0) return;
     working = true;
     var item = queue_items.shift();
     worker(item.data, function (val) {
       working = false;
       setTimeout(item.callback, 0, val); // callback 이벤트 루프에 등록
       runNext();
-    })
+    });
   }
 
   return function (data, callback) {
     queue_items.push({
       data: data,
-      callback: callback || function () {}
+      callback: callback || function () {},
     });
 
     setTimeOut(runNext, 0); // closure
-  }
+  };
 }
 
 function clac_cart_worker(cart, done) {
-  calc_cart_total(cart, function(total) {
+  calc_cart_total(cart, function (total) {
     update_total_dom(total);
     done(total);
   });
@@ -304,24 +302,58 @@ var update_total_queue = Queue(calc_cart_worker);
 - 단일스레드라는 자바스크립트의 특성과 클로저를 활용한 병렬 타임라인 간의 자원 공유 ( ~= Promise.all )
 
 ```ts
-function Cut (num, callback) {
+function Cut(num, callback) {
   var num_finished = 0;
-  return function() {
+  return function () {
     num_finished += 1;
     if (num_finished === num) callback();
-  }
+  };
 }
 ```
 
 - 비슷한 방법으로 멱등원(최초 한번의 실행만 완료되면 종료) 구현하기 (Promise의 any(), race() 비슷)
 
 ```js
-function JustOnce (action) {
+function JustOnce(action) {
   var alreadyCalled = false;
-  return function(a, b, c) {
+  return function (a, b, c) {
     if (alreadyCalled) return;
     alreadyCalled = true;
     return action(a, b, c);
+  };
+}
+```
+
+```js
+function ValueCell(initialValue) {
+  var currentValue = initialValue;
+  var watchers = [];
+  return {
+     val: function() {
+      return currentValue;
+     },
+     update: function (f) {
+      var oldValue = currentValue;
+      var newValue = f(oldValue);
+      if (oldValue !== newValue) {
+        currentValue = newValue;
+        forEach(watchers, function (watcher) {
+          watcher(newValue)
+        })
+      }
+     }
+  },
+  addWatcher: function (f){
+    watchers.push(f)
   }
 }
 ```
+
+- 원인과 효과의 결합을 분리합니다.
+- 결합의 분리는 원인과 효과의 중심을 관리합니다.
+- 여러 단계를 파이프라인으로 처리합니다.
+- 반응형 아키텍처는 타임라인은 유연히 함
+
+순차적 액션이 필요할 때와 반응형 아키텍처가 필요할 때를 구분하자  
+원인이 하나거나 원인과 효과의 중심이 없으면 순차적단계가 낫다.  
+반응형이 필요한 예시는, 알림 시스템이다. 원인(알림 종류), 효과(알림 전달 방법)
