@@ -135,3 +135,37 @@ ORM 에서 생성한 COUNT(DISTINCT(id))
 - 범위 조건 사용시에는 쿼리 성능 향상을 위해 날짜 컬럼을 ORDER 시킨다. (인덱스일 경우 활용을 하기 위해)
   - ex) order by finished_at, id limit 30;
 - 식별자 컬럼과 범위조건 컬럼의 값 순서가 동일하지 않은 경우에는 쿼리를 조금 더 수정해야한다.
+
+---
+
+## ep.05 Stored Function
+
+- Built-in Function
+- UDF
+- Stored Function
+  - deterministic, 동일 상태와 동일 입력일 때 동일 결과
+  - <-> not deterministic
+
+where 조건절에 deterministic 함수를 사용하면 pk를 const 타입으로 접근한다.
+
+pk를 const 타입으로 접근하면 레코드를 1건만 읽는 다는뜻이며, 매우 빠르게 처리된다.
+
+> not deterministic 함수는 풀스캔을 실행한다.
+
+입력에 따라 다른 값을 반환할 수 있기 때문에 모든 row를 비교하면서 함수를 호출한다. 비교 기준 값이 **변수**이기 때문에 인덱스 최적화가 안된다.
+
+not deterministic 으로 선언된 built-in 함수들
+
+- uuid()
+- rand()
+- now()
+- sysdate()
+- ...
+
+예외적으로 now() 함수는 하나의 Statement 내에서는 deterministic 처럼 작동한다. (sysdate()로 비교하면 풀스캔)
+
+sysdate-is-now 시스템 설정을 해야 sysdate()도 now()처럼 작동한다.
+
+함수 선언시 디폴트는 Not deterministic 이기 때문에, 옵션을 명시하자
+
++security 속성과 definer 속성도 정확히 이해하고 꼭 명시하자
