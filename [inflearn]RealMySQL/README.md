@@ -169,3 +169,28 @@ sysdate-is-now 시스템 설정을 해야 sysdate()도 now()처럼 작동한다.
 함수 선언시 디폴트는 Not deterministic 이기 때문에, 옵션을 명시하자
 
 +security 속성과 definer 속성도 정확히 이해하고 꼭 명시하자
+
+---
+
+## ep.06 Lateral Derived Table
+
+- Derived Table: From 절에서 서브쿼리를 통해 생성되는 임시 테이블
+- 선행 테이블의 컬럼을 참조할 수 없다.
+- LDT는 선행 테이블의 컬럼을 참조할 수 있다.
+- 참조한 값을 바탕으로 동적 결과 생성
+
+> SELECT \* FROM t left join LETERAL (select ~ From a where t.column = ?) s;
+
+select 절의 서브쿼리는 하나의 값만 반환할 수 있다.  
+이 때 inner join lateral 사용하여 해결 가능하다.
+
+inner join은 문법상 on 절이 선택사항이고,  
+left join은 on 절이 필수라 on true 라도 붙여야 한다.
+
+Select 절 내 연산 결과 반복 참조에 사용할 수 있다.  
+동일한 연산을 중복하지 않을 수 있다.
+
+> select \*  
+> from t,  
+>  lateral (select ~) l1,  
+>  lateral (select ~) l2;
