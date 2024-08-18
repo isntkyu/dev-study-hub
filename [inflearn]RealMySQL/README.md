@@ -194,3 +194,36 @@ Select 절 내 연산 결과 반복 참조에 사용할 수 있다.
 > from t,  
 >  lateral (select ~) l1,  
 >  lateral (select ~) l2;
+
+---
+
+## ep.07 SELECRT .. FOR UPDATE
+
+- MySQL의 SELECT는 기본적으로 잠금 없는 일관된 읽기를 제공.
+  - 레코드를 읽고 있는 도중에 다른 세션이 데이터를 변경하지 못하도록 Shared Lock을 걸 수 있지만, 성능이 저하됨.
+  - 반대 상황에서는 레코드 변경 세션은 Exclusive Lock을 걸어야 하고, 심각한 성능 저하 유발
+  - 이런 동시 처리 성능 개선을 위해 Non-Locking Consistend Read(MVCC)
+  - undo 라는 공간에 레코드를 백업하고 읽음
+- Repeatable Read 격리수준에서는 하나의 트랜잭션에서 여러번 조회해도 동일한 결과를 반환
+
+> Select .. for [UPDATE | SHARE] 는  
+> 항상 격리수준과 무관하게 최신 커밋 데이터 조회  
+> 즉, 일반 select와 다른 결과 받게 될 수 있음
+
+### FOR UPDATE
+
+- for update 구문은 exclusive lock 을 걸기 때문에 다른 트랜잭션은 대기하게되는 것.
+  - 트랜잭션 내에서 사용되어야만 효과가 있다.
+  - Auto-commit 모드에서는 효력이 없는 것과 마찬가지
+  - 안 쓸 수 방법이 있을 수 있다.(affected_rows를 확인하는 방법 등)
+  - where 조건에 필터링 조건을 잘 넣어서 잠금을 걸지 않도록 할 수 있다.
+- Lock Release 조건
+  - read-committed
+  - binlog_format=MIXED|ROW
+
+### FOR SHARE
+
+- 부모 테이블의 레코드를 확인하고 자식 테이블에 INSERT 할 떄 사용
+  - 부모테이블을 조회(for share) 하고 자식테이블 삽입할 때 부모 레코드를 보존하도록.
+- 부모레코드를 변경해야하면 for update를 쓰는 게 맞다
+  - 공유잠금에서 배타잠금으로 lock-upgrade하게 되면, 데드락 유발한다.
