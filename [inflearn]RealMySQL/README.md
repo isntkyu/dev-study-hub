@@ -294,3 +294,23 @@ SQL 예외를 버리지 말고 래핑해서 예외처리
 반면 Inner join은 읽는 순서가 고정되지 않아 인덱스 할용이 다를 수 있다. (옵티마이저에 의해)
 
 count 등을 사용할 떄 결과가 같다면 조인문을 제거하는 것을 고려해보자
+
+---
+
+## ep.11 Prepared Statement
+
+장점: preparedStatement 객체를 사용하여, SQL 인젝션 방지 및 쿼리 파싱 비용 감소
+
+단점: 메모리, 2번의 커넥션, 캐싱안됨(parse-tree만 캐싱) 캐시된 preparedStatement는 커넥션 내에서만 공유된다.
+
+ServerSide-PreparedStatement를 사용하는지 ORM 옵션 확인(보통 디폴트로 켜져있긴 하다.)
+
+> Parse-Tree는 캐시가 되니, 캐시를 재활용하도록 코딩해야한다.
+
+### PreparedStatement vs ConnectionPool
+
+- ps는 하나의 커넥션에서만 공유된다.
+- ps는 Re-parsing 비용 최소화
+  - 커넥션 개수와 쿼리 패턴의 개수를 파악하여 max_prepared_stmt_count 옵션 설정
+- 쿼리가 복잡하면 ps가 좋지만 단순하면 장점이 경감
+- ps는 메모리도 많이 차지할 수 있다.
