@@ -521,35 +521,51 @@ UNION DISTINCT는 처리가 완료되어야만 결과를 받을 수 있다.
 > json 컬럼 조회시 성능 저하되니 필요할 때만 SELECT
 
 ---
+
 ## ep.20 DEAD LOCK
 
 - 사람 생각순서로 프로그램을 작성하다보면 발생 가능성 높다.
 - 데드락이 발생하지 않도록 실행 순서를 정렬하더라도, 일반적인 상황에서는 경합이 없기 때문에 병렬로 수행된다. 즉, 성능 저하는 없다 (데드락이 발생했을 상황에서만 성능저하가 있는 것)
 - 좀 더 복잡한 예시
-	- tx1: delete from tbl where pk=2;
-	- tx2: insert into tbl (pk) values (2);
-	- tx3: insert into tbl (pk) values (2);
-	- tx2, tx3은 공유잠금을 동시에 획득 > 둘 다 배타잠금 획득 대기
-	- MySQL은 존재하지 않는 레코드에 대해서 공유잠금>배타잠금 순서로 획득시도함.
+  - tx1: delete from tbl where pk=2;
+  - tx2: insert into tbl (pk) values (2);
+  - tx3: insert into tbl (pk) values (2);
+  - tx2, tx3은 공유잠금을 동시에 획득 > 둘 다 배타잠금 획득 대기
+  - MySQL은 존재하지 않는 레코드에 대해서 공유잠금>배타잠금 순서로 획득시도함.
 - DeadLock detection thread가 데드락을 감지하는데, 동시 트랜잭션이 많을 경우 성능 저하를 유발할 수도 있다.
-	- 일부 서비스에서는 옵션자체를 꺼버리는 경우도 있음(구글)
+  - 일부 서비스에서는 옵션자체를 꺼버리는 경우도 있음(구글)
 - 데드락 처리 방식은 롤백이 쉬운 트랜잭션(undo가 적은)트랜잭션을 롤백
-	- 배치와 서비스쿼리가 경합하면, 데이터 변경이 적은 서비스쿼리가 종료될 가능성 높다.
+  - 배치와 서비스쿼리가 경합하면, 데이터 변경이 적은 서비스쿼리가 종료될 가능성 높다.
 
 ---
 
 ## ep.21 Join Update & Join Delete
 
- - 다른 테이블의 컬럼값을 참조하는 경우, 여러 테이블을 처리하는 경우
- - 각 다른 ROW를 한번에 각 다른 값으로 업데이트 할 때 쓸만한 방법
-	 - UPDATE tbl INNER JOIN (VALUES ROW(), (), ());
- - DELETE a, b FROM a INNER JOIN b WHERE ?;
-	 - 전체 또는 일부 삭제 가능
- - Optimizer Hint를 참조할 수 있다.
+- 다른 테이블의 컬럼값을 참조하는 경우, 여러 테이블을 처리하는 경우
+- 각 다른 ROW를 한번에 각 다른 값으로 업데이트 할 때 쓸만한 방법
+  - UPDATE tbl INNER JOIN (VALUES ROW(), (), ());
+- DELETE a, b FROM a INNER JOIN b WHERE ?;
+  - 전체 또는 일부 삭제 가능
+- Optimizer Hint를 참조할 수 있다.
+
 ```sql
-DELETE /*+ JOIN_FIXED_ORDER() */ a, b FROM a INNER JOIN b	
+DELETE /*+ JOIN_FIXED_ORDER() */ a, b FROM a INNER JOIN b
 ```
+
 - 주의사항
-	- 공유잠금이 발생하므로 잠금경합 발생할 수 있다.
-	- 조인 관계가 1:N일 때 조심해서 처리해야 한다.
-	- 쿼리가 복잡하므로 실행계획 확인 필요하다.
+  - 공유잠금이 발생하므로 잠금경합 발생할 수 있다.
+  - 조인 관계가 1:N일 때 조심해서 처리해야 한다.
+  - 쿼리가 복잡하므로 실행계획 확인 필요하다.
+
+---
+
+## ep.22 Connection Management
+
+- MySQL은 다른 DBMS와는 다르게 쓰레드 기반이다. (메모리 적게 사용)
+- 대신 커넥션 개수에 유의해야 한다.
+- 앱 서버의 개수를 감안해서 최대 커넥션 수를 고려하여 커넥션 풀의 Max설정을 적당히 해줘야한다.
+- Connection Timeout은 밀리초 이하의 값 설정 권장하지 않음
+  - 커넥션 가져오지 못할 경우, 다른 Fallback 전략이 없음
+- Query Timeout도 재요청을 하게 할 바에는 너무 짧게 하지 않는게 낫다.
+- idle Timeout은 20~30분 이상 설정 권장
+  - DBMS 서버의 커넥션은 짧게 쓰고 버리는 자원이 아니다.
