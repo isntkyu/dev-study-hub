@@ -535,3 +535,21 @@ UNION DISTINCT는 처리가 완료되어야만 결과를 받을 수 있다.
 	- 일부 서비스에서는 옵션자체를 꺼버리는 경우도 있음(구글)
 - 데드락 처리 방식은 롤백이 쉬운 트랜잭션(undo가 적은)트랜잭션을 롤백
 	- 배치와 서비스쿼리가 경합하면, 데이터 변경이 적은 서비스쿼리가 종료될 가능성 높다.
+
+---
+
+## ep.21 Join Update & Join Delete
+
+ - 다른 테이블의 컬럼값을 참조하는 경우, 여러 테이블을 처리하는 경우
+ - 각 다른 ROW를 한번에 각 다른 값으로 업데이트 할 때 쓸만한 방법
+	 - UPDATE tbl INNER JOIN (VALUES ROW(), (), ());
+ - DELETE a, b FROM a INNER JOIN b WHERE ?;
+	 - 전체 또는 일부 삭제 가능
+ - Optimizer Hint를 참조할 수 있다.
+```sql
+DELETE /*+ JOIN_FIXED_ORDER() */ a, b FROM a INNER JOIN b	
+```
+- 주의사항
+	- 공유잠금이 발생하므로 잠금경합 발생할 수 있다.
+	- 조인 관계가 1:N일 때 조심해서 처리해야 한다.
+	- 쿼리가 복잡하므로 실행계획 확인 필요하다.
