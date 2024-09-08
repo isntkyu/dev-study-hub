@@ -569,3 +569,10 @@ DELETE /*+ JOIN_FIXED_ORDER() */ a, b FROM a INNER JOIN b
 - Query Timeout도 재요청을 하게 할 바에는 너무 짧게 하지 않는게 낫다.
 - idle Timeout은 20~30분 이상 설정 권장
   - DBMS 서버의 커넥션은 짧게 쓰고 버리는 자원이 아니다.
+
+### Middleware
+
+- MySQL Router
+- ProxySQL
+- RDS Proxy
+- 서버사이드 커넥션 풀 역할
