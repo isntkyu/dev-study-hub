@@ -8,7 +8,7 @@
 
 - CHAR 타입은 할당된 문자 길이와 상관없이 항상 고정된 공간을 할당해서 사용한다.
 - CHAR 는 최대 255 VARCHAR는 최대 16383 글자까지 저장 가능하다
-- VARCHAT 타입은 실제로 저장된 문자의 바이트 수를 별도로 관리한다. (길이 저장 바이트)
+- VARCHAR 타입은 실제로 저장된 문자의 바이트 수를 별도로 관리한다. (길이 저장 바이트)
 - 가변길이 문자셋(UTF8MB4)을 사용하는 경우에는 CHAR 타입도 저장된 값의 길이를 같이 관리한다.
 - 공간을 미리 예약하는가 하지 않는가의 차이이다.
 
@@ -179,7 +179,7 @@ sysdate-is-now 시스템 설정을 해야 sysdate()도 now()처럼 작동한다.
 - LDT는 선행 테이블의 컬럼을 참조할 수 있다.
 - 참조한 값을 바탕으로 동적 결과 생성
 
-> SELECT \* FROM t left join LETERAL (select ~ From a where t.column = ?) s;
+> SELECT \* FROM t left join LATERAL (select ~ From a where t.column = ?) s;
 
 select 절의 서브쿼리는 하나의 값만 반환할 수 있다.  
 이 때 inner join lateral 사용하여 해결 가능하다.
@@ -197,7 +197,7 @@ Select 절 내 연산 결과 반복 참조에 사용할 수 있다.
 
 ---
 
-## ep.07 SELECRT .. FOR UPDATE
+## ep.07 SELECT .. FOR UPDATE
 
 - MySQL의 SELECT는 기본적으로 잠금 없는 일관된 읽기를 제공.
   - 레코드를 읽고 있는 도중에 다른 세션이 데이터를 변경하지 못하도록 Shared Lock을 걸 수 있지만, 성능이 저하됨.
